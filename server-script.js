@@ -85,10 +85,13 @@ function areResultsEqual(result1, result2) {
     }
 
     for (let i = 0; i < result1.length; i++) {
-        const row1 = result1[i];
-        const row2 = result2.find(r => JSON.stringify(r) === JSON.stringify(row1));
+        const values1 = Object.values(result1[i]);
+        const matchingRow = result2.find(row => {
+            const values2 = Object.values(row);
+            return JSON.stringify(values1) === JSON.stringify(values2);
+        });
 
-        if (!row2) {
+        if (!matchingRow) {
             return false;
         }
     }
