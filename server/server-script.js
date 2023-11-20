@@ -1,15 +1,25 @@
 const fs = require('fs');
 const mysql = require('mysql');
 const express = require('express');
-const app = express();
-const port = 3000;
+const port = 3001;
 
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+});
+
+
+const app = express();
 app.use(express.static('public'));
 
-app.get('/', (req, res) => {
-    // Read the content of index.html and send it as the response
-    const indexHtml = fs.readFileSync('index.html', 'utf8');
-    res.send(indexHtml);
+app.use((err, req, res, next) => {
+    console.error('Error:', err);
+
+    const errorHtml = `${err.message}`;
+    res.status(500).send(errorHtml);
+});
+
+app.get('/api', (req, res) => {
+    res.send("You have reached the API!");
 });
 
 app.get('/compare', (req, res) => {
@@ -31,45 +41,55 @@ app.get('/compare', (req, res) => {
     const query2 = req.query.query2;
 
     con_questions.connect(function(err) {
-        if (err) throw err;
+        if (err) {
+            return next(err);
+        }
         console.log("Connected!");
     });
 
     const query3 = `SELECT jawaban FROM questions WHERE id = '${questionId}'`;
 
     con_questions.query(query3, function(err, result, fields) {
-        if (err) throw err;
+        if (err) {
+            return next(err);
+        }
 
         const query1 = result[0].jawaban;
 
         con_classicmodels.connect(function(err) {
-            if (err) throw err;
+            if (err) {
+                return next(err);
+            }
             console.log("Connected!");
 
             con_classicmodels.query(query1, function(err, result1, fields1) {
-                if (err) throw err;
+                if (err) {
+                    return next(err);
+                }
 
                 con_classicmodels.query(query2, function(err, result2, fields2) {
-                    if (err) throw err;
+                    if (err) {
+                        return next(err);
+                    }
 
                     const resultString1 = JSON.stringify(result1);
                     const resultString2 = JSON.stringify(result2);
 
                     let output = '';
 
-                    output += `Query benar: ${result1.length} rows x ${fields1.length} columns<br>`;
-                    output += `Query jawaban: ${result2.length} rows x ${fields2.length} columns<br>`;
+                    output += `Query benar: ${result1.length} rows x ${fields1.length} columns\n\n`;
+                    output += `Query jawaban: ${result2.length} rows x ${fields2.length} columns\n\n`;
 
                     if (resultString1 === resultString2) {
-                        output += "[D] RESULTSTRING: Same<br>";
+                        console.log("[D] RESULTSTRING: Same<br>");
                     } else {
-                        output += "[D] RESULTSTRING: Different<br>";
+                        console.log("[D] RESULTSTRING: Different<br>");
                     }
 
                     if (areResultsEqual(result1, result2)) {
-                        output += "Results are the same<br>";
+                        output += "Results are the same\n";
                     } else {
-                        output += "Results are not the same<br>";
+                        output += "Results are not the same\n";
                     }
 
                     res.send(output);
