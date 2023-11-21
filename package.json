@@ -20,7 +20,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "start:frontend": "react-scripts start",
-    "start:backend": "nodemon server/server-script.js",
+    "start:backend": "nodemon server/server.js",
     "start": "concurrently -n \"FRONTEND,BACKEND\" -c \"red,blue\" -p \"[{name}]\" \"npm run start:frontend\" \"npm run start:backend\""
   },
   "proxy": "http://localhost:3001",

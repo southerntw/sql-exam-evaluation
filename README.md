@@ -2,7 +2,7 @@ It's stuffs.
 ---
 
 ### Run
-```node server-script.js```
+```npm start```
 
 ### TODO:
 - [X] ~~19/11/2023: Fix results comparison (Capitalization of SELECT column_names affect the results - it shouldn't)~~

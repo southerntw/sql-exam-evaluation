@@ -6,41 +6,76 @@ import React, {
 const App = () => {
     const [questionId, setQuestionId] = useState('');
     const [query2, setQuery2] = useState('');
-    const [result, setResult] = useState('');
+    const [result, setResult] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [countdown, setCountdown] = useState(10);
 
     const submitForm = () => {
         if (isSubmitting) {
-            return;
+          return;
         }
         setIsSubmitting(true);
 
-        // Make an AJAX request to the server
         fetch(`compare?questionId=${questionId}&query2=${encodeURIComponent(query2)}`)
-            .then((response) => response.text())
-            .then((data) => { 
-              setResult(data); 
-              setTimeout(() => {
-                setIsSubmitting(false)
-                setCountdown(10);;
-              }, 10000); })
-            .catch((error) => console.error('Error:', error));
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`${response.status}: ${response.statusText}`);
+            }
+            return response.json(); // Assuming the server sends JSON for success
+          })
+          .then((data) => {
+            setResult(data);
+            setTimeout(() => {
+              setIsSubmitting(false);
+              setCountdown(10);
+            }, 10000);
+          })
+          .catch((error) => {
+            setResult(`Error: ${error.message}`);
+            setTimeout(() => {
+              setIsSubmitting(false);
+              setCountdown(5);
+            }, 10000);
+          });
+  };
+
+  useEffect(() => {
+    let timer;
+
+    // Update countdown every second
+    if (isSubmitting) {
+      timer = setInterval(() => {
+        setCountdown((prevCount) => (prevCount > 0 ? prevCount - 1 : 0));
+      }, 1000);
+    }
+
+    // Clear the interval when the component unmounts or the countdown reaches 0
+    return () => clearInterval(timer);
+  }, [isSubmitting]);
+
+    const renderTable = (queryResult) => {
+      const tableRows = queryResult.data.map((row, index) => (
+        <tr key={index}>
+          {Object.values(row).map((value, idx) => (
+            <td key={idx}>{value}</td>
+          ))}
+        </tr>
+      ));
+
+      return (
+        <table>
+          <thead>
+            <tr>
+              {queryResult.columns.map((column, index) => (
+                <th key={index}>{column}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>{tableRows}</tbody>
+        </table>
+      );
     };
 
-    useEffect(() => {
-      let timer;
-
-      // Update countdown every second
-      if (isSubmitting) {
-        timer = setInterval(() => {
-          setCountdown((prevCount) => (prevCount > 0 ? prevCount - 1 : 0));
-        }, 1000);
-      }
-
-      // Clear the interval when component unmounts or countdown reaches 0
-      return () => clearInterval(timer);
-    }, [isSubmitting]);
 
     const styles = {
         container: {
@@ -173,15 +208,29 @@ const App = () => {
         {isSubmitting && <span style={styles.countdown}>{`Countdown: ${countdown}s`}</span>}
         </form>
 
-        <
-        div style = {
-            styles.resultContainer
-        }
-        id = "resultContainer" > {
-            result
-        } <
-        /div> <
-        /div>
+        <div style={styles.resultContainer} id="resultContainer">
+          {result.error ? (
+            <p style={{ color: 'red' }}>{result.error}</p>
+          ) : result.query1 && result.query2 ? (
+            <>
+              <p>
+                Query 1: {result.query1.rows} rows x {result.query1.columns} columns
+              </p>
+              <p>
+                Query 2: {result.query2.rows} rows x {result.query2.columns} columns
+              </p>
+              <p>Status: {result.status}</p>
+              <p>
+                {result.query1.data[0].customerName}
+              </p>
+
+            </>
+          ) : (
+            <p>Waiting for result...</p>
+          )}
+        </div>
+
+        </div>
     );
 };
 

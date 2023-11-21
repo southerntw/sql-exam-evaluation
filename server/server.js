@@ -7,22 +7,14 @@ process.on('uncaughtException', (err) => {
     console.error('Uncaught Exception:', err);
 });
 
-
 const app = express();
 app.use(express.static('public'));
-
-app.use((err, req, res, next) => {
-    console.error('Error:', err);
-
-    const errorHtml = `${err.message}`;
-    res.status(500).send(errorHtml);
-});
 
 app.get('/api', (req, res) => {
     res.send("You have reached the API!");
 });
 
-app.get('/compare', (req, res) => {
+app.get('/compare', (req, res, next) => {
     const con_questions = mysql.createConnection({
         host: "localhost",
         user: "root",
@@ -69,16 +61,24 @@ app.get('/compare', (req, res) => {
 
                 con_classicmodels.query(query2, function(err, result2, fields2) {
                     if (err) {
-                        return next(err);
+                        return next(err.message);
                     }
 
                     const resultString1 = JSON.stringify(result1);
                     const resultString2 = JSON.stringify(result2);
 
-                    let output = '';
-
-                    output += `Query benar: ${result1.length} rows x ${fields1.length} columns\n\n`;
-                    output += `Query jawaban: ${result2.length} rows x ${fields2.length} columns\n\n`;
+                    let output = {
+                        query1: {
+                            rows: result1.length,
+                            columns: fields1.length,
+                            data: result1,
+                        },
+                        query2: {
+                            rows: result2.length,
+                            columns: fields2.length,
+                            data: result2,
+                        },
+                    };
 
                     if (resultString1 === resultString2) {
                         console.log("[D] RESULTSTRING: Same<br>");
@@ -87,16 +87,24 @@ app.get('/compare', (req, res) => {
                     }
 
                     if (areResultsEqual(result1, result2)) {
-                        output += "Results are the same\n";
+                        output.status = "Same";
                     } else {
-                        output += "Results are not the same\n";
+                        output.status = "Different";
                     }
+
+                    const outputString = JSON.stringify(output, null, 2);
+                    fileWrite('./.temp/output.json', `${outputString}`);
 
                     res.send(output);
                 });
             });
         });
     });
+});
+
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.json({ error: err });
 });
 
 function areResultsEqual(result1, result2) {
