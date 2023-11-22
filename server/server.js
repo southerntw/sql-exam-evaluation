@@ -8,10 +8,34 @@ process.on('uncaughtException', (err) => {
 });
 
 const app = express();
+
 app.use(express.static('public'));
 
-app.get('/api', (req, res) => {
-    res.send("You have reached the API!");
+app.get('/questions', (req, res, next) => {
+    const con_questions = mysql.createConnection({
+        host: "localhost",
+        user: "root",
+        password: "",
+        database: "exam"
+    });
+
+    con_questions.connect(function(err) {
+        if (err) {
+            return next(err);
+        }
+        console.log('connected!');
+    });
+
+    con_questions.query('SELECT * FROM questions', function(err, result, fields) {
+        if (err) return next(err);
+
+        const questions = { questions: result };
+
+        const questionString = JSON.stringify(questions, null, 2);
+        fileWrite('./.temp/output.json', `${questionString}`);
+
+        res.send(questions);
+    })
 });
 
 app.get('/compare', (req, res, next) => {

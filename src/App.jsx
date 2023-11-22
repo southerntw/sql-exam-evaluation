@@ -1,26 +1,35 @@
 import React, {
     useState,
     useEffect,
-    Component
 } from 'react';
-import { useTable } from 'react-table'
-import './App.css'
+import './App.css';
+import TopBar from './components/TopBar';
+import ClipLoader from "react-spinners/ClipLoader";
+import Button from '@mui/material/Button';
+import AlertWrong from './components/AlertWrong';
+import AlertCorrect from './components/AlertCorrect';
+import AlertError from './components/AlertError';
 
-const App = () => {
+
+
+function App() {
     const [questionId, setQuestionId] = useState('');
     const [query2, setQuery2] = useState('');
     const [result, setResult] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [countdown, setCountdown] = useState(10);
-
+    const [isLoading, setIsLoading] = useState(false);
+    
     const submitForm = () => {
-        if (isSubmitting) {
-          return;
+        if (isLoading) {
+            return;
         }
-        setIsSubmitting(true);
+        setIsLoading(true);
+        setResult({})
 
         fetch(`compare?questionId=${questionId}&query2=${encodeURIComponent(query2)}`)
           .then((response) => {
+            setIsLoading(false);
             if (!response.ok) {
               throw new Error(`${response.status}: ${response.statusText}`);
             }
@@ -83,14 +92,18 @@ const App = () => {
       );
     };
 
-
+    const override: CSSProperties = {
+        display: 'block',
+        margin: '0 auto'
+    };
 
     const styles = {
         container: {
-            fontFamily: 'Arial, sans-serif',
-            maxWidth: '600px',
+            fontFamily: 'Oxygen',
+            maxWidth: '900px',
             margin: '0 auto',
             padding: '20px',
+            marginTop: '20px',
             backgroundColor: '#f4f4f4',
             borderRadius: '8px',
             boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
@@ -147,12 +160,11 @@ const App = () => {
         },
     };
 
-    return ( <
-        div style = {
-            styles.container
-        } >
+    return ( 
+        <div>
+        <TopBar />
+        <div style = {styles.container}>
         <
-        h1 > Query Checker < /h1> <
         form style = {
             styles.form
         } >
@@ -204,24 +216,42 @@ const App = () => {
         required >
         < /textarea> <
         br / >
-        <
-        button style = {
-            styles.button
-        }
-        type = "button"
-        onClick = {
-            submitForm
-        } >
-        Submit </button> 
+        <Button variant="contained" onClick ={submitForm}>
+            {isLoading ? (
+                        <div className="spinner-border" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                    ) : 'Check Query'}
+        </Button>
         {isSubmitting && <span style={styles.countdown}>{`Cooldown: ${countdown}s`}</span>}
+        
         </form>
 
         <div style={styles.resultContainer} id="resultContainer">
+        <ClipLoader
+                        color="#ADC5FD"
+                        size={25}
+                        loading={isLoading}
+                        cssOverride={override}
+                        aria-label="Loading Spinner"
+                        data-testid="loader"
+                />
+
           {result.error ? (
-            <p style={{ color: 'red' }}>{result.error}</p>
-          ) : result.query1 && result.query2 ? (
             <>
-               <p>{result.status}</p>
+             <AlertError message = {result.error}/>
+            </>
+          ) : result.query1 && result.query2 ? (
+          // Jawaban Salah. Isi tabel berbeda.
+          // Jawaban Benar. Isi tabel sama.
+            <>               
+            {
+                result.status == 'Jawaban Benar. Isi tabel sama.' ? (
+                    <AlertCorrect message = {result.status}/>
+                ) : (
+                    <AlertWrong message = {result.status}/>
+                )
+            }
                <div className="table-container">
                   <p>Jawaban Benar:</p>
                   <p>{result.query1.rows}r x {result.query1.columns}c</p>
@@ -238,6 +268,7 @@ const App = () => {
           )}
         </div>
 
+        </div>
         </div>
     );
 };
