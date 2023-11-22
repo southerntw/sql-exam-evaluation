@@ -87,9 +87,9 @@ app.get('/compare', (req, res, next) => {
                     }
 
                     if (areResultsEqual(result1, result2)) {
-                        output.status = "Same";
+                        output.status = "Jawaban Benar. Isi tabel sama.";
                     } else {
-                        output.status = "Different";
+                        output.status = "Jawaban Salah. Isi tabel berbeda.";
                     }
 
                     const outputString = JSON.stringify(output, null, 2);

@@ -1,7 +1,10 @@
 import React, {
     useState,
-    useEffect
+    useEffect,
+    Component
 } from 'react';
+import { useTable } from 'react-table'
+import './App.css'
 
 const App = () => {
     const [questionId, setQuestionId] = useState('');
@@ -39,6 +42,7 @@ const App = () => {
           });
   };
 
+
   useEffect(() => {
     let timer;
 
@@ -53,28 +57,32 @@ const App = () => {
     return () => clearInterval(timer);
   }, [isSubmitting]);
 
-    const renderTable = (queryResult) => {
-      const tableRows = queryResult.data.map((row, index) => (
-        <tr key={index}>
-          {Object.values(row).map((value, idx) => (
-            <td key={idx}>{value}</td>
-          ))}
-        </tr>
-      ));
+  const render = (data, key) => {
+      const columns = Object.keys(data[0] || {});
 
       return (
-        <table>
-          <thead>
-            <tr>
-              {queryResult.columns.map((column, index) => (
-                <th key={index}>{column}</th>
+        <div key={key} className="scrollable-table">
+          <table border="2">
+            <tbody>
+              <tr>
+                {columns.map((column, index) => (
+                  <th key={index}>{column}</th>
+                ))}
+              </tr>
+
+              {data.map((rowData, key) => (
+                <tr key={key}>
+                  {columns?.map((col, colIndex) => (
+                    <td key={colIndex}>{rowData[col]}</td>
+                  ))}
+                </tr>
               ))}
-            </tr>
-          </thead>
-          <tbody>{tableRows}</tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       );
     };
+
 
 
     const styles = {
@@ -205,7 +213,7 @@ const App = () => {
             submitForm
         } >
         Submit </button> 
-        {isSubmitting && <span style={styles.countdown}>{`Countdown: ${countdown}s`}</span>}
+        {isSubmitting && <span style={styles.countdown}>{`Cooldown: ${countdown}s`}</span>}
         </form>
 
         <div style={styles.resultContainer} id="resultContainer">
@@ -213,20 +221,20 @@ const App = () => {
             <p style={{ color: 'red' }}>{result.error}</p>
           ) : result.query1 && result.query2 ? (
             <>
-              <p>
-                Query 1: {result.query1.rows} rows x {result.query1.columns} columns
-              </p>
-              <p>
-                Query 2: {result.query2.rows} rows x {result.query2.columns} columns
-              </p>
-              <p>Status: {result.status}</p>
-              <p>
-                {result.query1.data[0].customerName}
-              </p>
-
+               <p>{result.status}</p>
+               <div className="table-container">
+                  <p>Jawaban Benar:</p>
+                  <p>{result.query1.rows}r x {result.query1.columns}c</p>
+                  {render(result.query1.data, 'query1')}
+                </div>
+                <div className="table-container">
+                  <p>Jawaban Anda:</p>
+                  <p>{result.query2.rows}r x {result.query2.columns}c</p>
+                  {render(result.query2.data, 'query2')}
+                </div>
             </>
           ) : (
-            <p>Waiting for result...</p>
+            <p></p>
           )}
         </div>
 

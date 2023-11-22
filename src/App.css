@@ -36,3 +36,17 @@
     transform: rotate(360deg);
   }
 }
+
+.scrollable-table {
+  max-height: 300px; /* Adjust the max-height as needed */
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  margin-bottom: 20px; /* Add margin between tables */
+}
+
+.table-container {
+  width: 45%; /* Adjust the width as needed */
+  display: inline-block;
+  vertical-align: top; /* Align tables at the top */
+  margin-right: 20px; /* Add margin between tables */
+}
