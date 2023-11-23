@@ -2,6 +2,7 @@ const fs = require('fs');
 const mysql = require('mysql');
 const express = require('express');
 const port = 3001;
+const bodyParser = require('body-parser');
 
 process.on('uncaughtException', (err) => {
     console.error('Uncaught Exception:', err);
@@ -38,24 +39,35 @@ app.get('/questions', (req, res, next) => {
     })
 });
 
-app.get('/compare', (req, res, next) => {
+app.use(express.json());
+
+app.post('/compare', (req, res, next) => {
+
+    console.log("[D]:", req.body);
+    console.log("[D]: /compare accessed");
+    console.log("[D]:", req.body.questionId);
+    console.log("[D]:", req.body.query2);
+
+    const questionId = req.body.questionId;
+    const query2 = req.body.query2;
+
     const con_questions = mysql.createConnection({
         host: "localhost",
         user: "root",
         password: "",
-        database: "exam"
+        database: "exam",
+        charset: 'utf8mb4',
     });
 
     const con_classicmodels = mysql.createConnection({
         host: "localhost",
         user: "root",
         password: "",
-        database: "classicmodels"
+        database: "sakila",
+        charset: 'utf8mb4',
     });
 
-    const questionId = req.query.questionId;
-    const query2 = req.query.query2;
-
+    
     con_questions.connect(function(err) {
         if (err) {
             return next(err);
@@ -70,7 +82,7 @@ app.get('/compare', (req, res, next) => {
             return next(err);
         }
 
-        const query1 = result[0].jawaban;
+        const query1 = result[0].jawaban
 
         con_classicmodels.connect(function(err) {
             if (err) {

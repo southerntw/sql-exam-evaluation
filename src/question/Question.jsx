@@ -2,54 +2,30 @@ import React, {
     useState,
     useEffect,
 } from 'react';
-import './App.css';
-import TopBar from './components/TopBar';
+import '../App.css';
+import TopBar from '../components/TopBar';
 import ClipLoader from "react-spinners/ClipLoader";
 import Button from '@mui/material/Button';
-import AlertWrong from './components/AlertWrong';
-import AlertCorrect from './components/AlertCorrect';
-import AlertError from './components/AlertError';
+import AlertWrong from '../components/AlertWrong';
+import AlertCorrect from '../components/AlertCorrect';
+import AlertError from '../components/AlertError';
 
-
-function App() {
+function Question() {
     const [questionId, setQuestionId] = useState('');
     const [query2, setQuery2] = useState('');
     const [result, setResult] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [cooldown, setCooldown] = useState(10);
+    const [countdown, setCountdown] = useState(10);
     const [isLoading, setIsLoading] = useState(false);
-
-    const targetTime = '15:40:00'; // Change this to your desired time
-
-    // Calculate the milliseconds until the target time
-    const targetDateTime = new Date();
-    const [targetHour, targetMinute, targetSecond] = targetTime.split(':').map(Number);
-    targetDateTime.setHours(targetHour, targetMinute, targetSecond, 0);
-    const timeDiff = targetDateTime.getTime() - new Date().getTime();
-
-    // Initialize the countdown with the time difference in seconds
-    const [countdown, setCountdown] = useState(Math.ceil(timeDiff / 1000));
     
     const submitForm = () => {
-        console.log("[D]: ", questionId);
-        console.log("[D]: ", query2);
-
         if (isLoading) {
             return;
         }
         setIsLoading(true);
         setResult({})
 
-        fetch('/compare', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                questionId: questionId,
-                query2: query2,
-              }),
-            })  
+        fetch(`compare?questionId=${questionId}&query2=${encodeURIComponent(query2)}`)
           .then((response) => {
             setIsLoading(false);
             if (!response.ok) {
@@ -77,27 +53,16 @@ function App() {
   useEffect(() => {
     let timer;
 
-    if (countdown > 0) {
-        timer = setInterval(() => {
+    // Update countdown every second
+    if (isSubmitting) {
+      timer = setInterval(() => {
         setCountdown((prevCount) => (prevCount > 0 ? prevCount - 1 : 0));
       }, 1000);
-      }
     }
 
     // Clear the interval when the component unmounts or the countdown reaches 0
     return () => clearInterval(timer);
-  }, [isSubmitting, countdown]);
-
-  const renderCountdownText = () => {
-        // Customize the text based on the countdown value
-        if (countdown === 0) {
-            return 'Time is up!';
-        } else if (countdown <= 5) {
-            return `Hurry up! Time left: ${countdown}s`;
-        } else {
-            return `Cooldown: ${countdown}s`;
-        }
-    };
+  }, [isSubmitting]);
 
   const render = (data, key) => {
       const columns = Object.keys(data[0] || {});
@@ -256,8 +221,7 @@ function App() {
                         </div>
                     ) : 'Check Query'}
         </Button>
-        {isSubmitting && <span style={styles.countdown}>{renderCountdownText()}</span>}
-
+        {isSubmitting && <span style={styles.countdown}>{`Cooldown: ${countdown}s`}</span>}
         
         </form>
 
@@ -305,4 +269,4 @@ function App() {
     );
 };
 
-export default App;
+export default Question;
