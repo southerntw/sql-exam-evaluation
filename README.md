@@ -1,7 +1,9 @@
-It's stuffs.
----
+# Install
+```
+npm i
+```
 
-### Run
+# Run
 ```
 npm start
 ```
