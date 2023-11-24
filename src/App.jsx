@@ -19,7 +19,7 @@ function App() {
     const [cooldown, setCooldown] = useState(10);
     const [isLoading, setIsLoading] = useState(false);
 
-    const targetTime = '15:40:00'; // Change this to your desired time
+    const targetTime = '16:20:00'; // Change this to your desired time
 
     // Calculate the milliseconds until the target time
     const targetDateTime = new Date();
@@ -73,21 +73,6 @@ function App() {
           });
   };
 
-
-  useEffect(() => {
-    let timer;
-
-    if (countdown > 0) {
-        timer = setInterval(() => {
-        setCountdown((prevCount) => (prevCount > 0 ? prevCount - 1 : 0));
-      }, 1000);
-      }
-    }
-
-    // Clear the interval when the component unmounts or the countdown reaches 0
-    return () => clearInterval(timer);
-  }, [isSubmitting, countdown]);
-
   const renderCountdownText = () => {
         // Customize the text based on the countdown value
         if (countdown === 0) {
@@ -111,14 +96,6 @@ function App() {
                   <th key={index}>{column}</th>
                 ))}
               </tr>
-
-              {data.map((rowData, key) => (
-                <tr key={key}>
-                  {columns?.map((col, colIndex) => (
-                    <td key={colIndex}>{rowData[col]}</td>
-                  ))}
-                </tr>
-              ))}
             </tbody>
           </table>
         </div>
@@ -256,8 +233,6 @@ function App() {
                         </div>
                     ) : 'Check Query'}
         </Button>
-        {isSubmitting && <span style={styles.countdown}>{renderCountdownText()}</span>}
-
         
         </form>
 
