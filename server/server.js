@@ -100,6 +100,22 @@ app.post('/compare', (req, res, next) => {
                         return next(err.message);
                     }
 
+                    result1.forEach(row => {
+                        for (const key in row) {
+                          if (Buffer.isBuffer(row[key])) {
+                            row[key] = row[key].toString('utf8');
+                          }
+                        }
+                      });
+
+                      result2.forEach(row => {
+                        for (const key in row) {
+                          if (Buffer.isBuffer(row[key])) {
+                            row[key] = row[key].toString('utf8');
+                          }
+                        }
+                      });
+
                     const resultString1 = JSON.stringify(result1);
                     const resultString2 = JSON.stringify(result2);
 
@@ -129,8 +145,10 @@ app.post('/compare', (req, res, next) => {
                     }
 
                     const outputString = JSON.stringify(output, null, 2);
-                    fileWrite('./.temp/output.json', `${outputString}`);
-
+                    if (questionId == '9G' || questionId == '4C') {
+                        fileWrite('./9g.txt', outputString)
+                    }
+                    // console.log(outputString);
                     res.send(output);
                 });
             });
