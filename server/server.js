@@ -123,9 +123,9 @@ app.post('/compare', (req, res, next) => {
                     }
 
                     if (areResultsEqual(result1, result2)) {
-                        output.status = "Jawaban Benar. Isi tabel sama.";
+                        output.status = "Jawaban Benar. Isi tabel dan kolom sama.";
                     } else {
-                        output.status = "Jawaban Salah. Isi tabel berbeda.";
+                        output.status = "Jawaban Salah. Isi tabel atau kolom berbeda.";
                     }
 
                     const outputString = JSON.stringify(output, null, 2);
@@ -144,23 +144,20 @@ app.use((err, req, res, next) => {
 });
 
 function areResultsEqual(result1, result2) {
-    if (result1.length !== result2.length) {
-        return false;
+  if (result1.length !== result2.length) {
+    return false;
+  }
+
+  for (let i = 0; i < result1.length; i++) {
+    const row1 = result1[i];
+    const row2 = result2.find(r => JSON.stringify(r) === JSON.stringify(row1));
+
+    if (!row2) {
+      return false;
     }
+  }
 
-    for (let i = 0; i < result1.length; i++) {
-        const values1 = Object.values(result1[i]);
-        const matchingRow = result2.find(row => {
-            const values2 = Object.values(row);
-            return JSON.stringify(values1) === JSON.stringify(values2);
-        });
-
-        if (!matchingRow) {
-            return false;
-        }
-    }
-
-    return true;
+  return true;
 }
 
 function fileWrite(filePath, resultString) {

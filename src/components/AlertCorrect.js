@@ -6,8 +6,7 @@ export default function AlertCorrect({message}) {
   return (
     <Alert severity="success">
       <AlertTitle><strong>Jawaban Benar.</strong></AlertTitle>
-      {message} <br/>
-      Jawaban anda telah tersimpan otomatis. Silahkan mengerjakan soal yang lain.
+      {message}
     </Alert>    
   );
 }

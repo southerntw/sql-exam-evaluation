@@ -96,6 +96,14 @@ function App() {
                   <th key={index}>{column}</th>
                 ))}
               </tr>
+
+              {data.map((rowData, key) => (
+                <tr key={key}>
+                  {columns?.map((col, colIndex) => (
+                    <td key={colIndex}>{rowData[col]}</td>
+                  ))}
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -253,10 +261,11 @@ function App() {
           ) : result.query1 && result.query2 ? (
             <>               
             {
-                result.status == 'Jawaban Benar. Isi tabel sama.' ? (
+                result.status == 'Jawaban Benar. Isi tabel dan kolom sama.' ? (
                     <AlertCorrect message = {result.status}/>
                 ) : (
                     <AlertWrong message = {result.status}/>
+                    
                 )
             }
                <div className="table-container">
@@ -265,7 +274,7 @@ function App() {
                   {render(result.query1.data, 'query1')}
                 </div>
                 <div className="table-container">
-                  <p>Jawaban Anda:</p>
+                  <p>Jawaban Praktikan:</p>
                   <p>{result.query2.rows}r x {result.query2.columns}c</p>
                   {render(result.query2.data, 'query2')}
                 </div>
