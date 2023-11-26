@@ -30,7 +30,9 @@ app.get('/questions', (req, res, next) => {
     con_questions.query('SELECT * FROM questions', function(err, result, fields) {
         if (err) return next(err);
 
-        const questions = { questions: result };
+        const questions = {
+            questions: result
+        };
 
         const questionString = JSON.stringify(questions, null, 2);
         fileWrite('./.temp/output.json', `${questionString}`);
@@ -67,7 +69,7 @@ app.post('/compare', (req, res, next) => {
         charset: 'utf8mb4',
     });
 
-    
+
     con_questions.connect(function(err) {
         if (err) {
             return next(err);
@@ -102,19 +104,19 @@ app.post('/compare', (req, res, next) => {
 
                     result1.forEach(row => {
                         for (const key in row) {
-                          if (Buffer.isBuffer(row[key])) {
-                            row[key] = row[key].toString('utf8');
-                          }
+                            if (Buffer.isBuffer(row[key])) {
+                                row[key] = row[key].toString('utf8');
+                            }
                         }
-                      });
+                    });
 
-                      result2.forEach(row => {
+                    result2.forEach(row => {
                         for (const key in row) {
-                          if (Buffer.isBuffer(row[key])) {
-                            row[key] = row[key].toString('utf8');
-                          }
+                            if (Buffer.isBuffer(row[key])) {
+                                row[key] = row[key].toString('utf8');
+                            }
                         }
-                      });
+                    });
 
                     const resultString1 = JSON.stringify(result1);
                     const resultString2 = JSON.stringify(result2);
@@ -138,17 +140,20 @@ app.post('/compare', (req, res, next) => {
                         console.log("[D] RESULTSTRING: Different<br>");
                     }
 
-                    if (areResultsEqual(result1, result2)) {
-                        output.status = "Jawaban Benar. Isi tabel dan kolom sama.";
-                    } else {
-                        output.status = "Jawaban Salah. Isi tabel atau kolom berbeda.";
-                    }
+                    const [columnSame, valuesSame] = areResultsEqual(result1, result2)
+                    output.status = "Wrong";
 
-                    const outputString = JSON.stringify(output, null, 2);
-                    if (questionId == '9G' || questionId == '4C') {
-                        fileWrite('./9g.txt', outputString)
+                    if (columnSame && valuesSame) {
+                        output.message = "Nama kolom dan isi tabel sama";
+                        output.status = "Correct";
+                    } else if (columnSame && !valuesSame) {
+                        output.message = "Isi tabel berbeda";
+                    } else if (!columnSame && valuesSame) {
+                        output.message = "Nama kolom berbeda";
+                    } else {
+                        output.message = "Isi tabel dan nama kolom berbeda";
                     }
-                    // console.log(outputString);
+                    
                     res.send(output);
                 });
             });
@@ -157,25 +162,40 @@ app.post('/compare', (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.json({ error: err });
+    console.error('Error:', err);
+    res.json({
+        error: err
+    });
 });
 
 function areResultsEqual(result1, result2) {
-  if (result1.length !== result2.length) {
-    return false;
-  }
+    let columnSame = true;
+    let valuesSame = true;
 
-  for (let i = 0; i < result1.length; i++) {
-    const row1 = result1[i];
-    const row2 = result2.find(r => JSON.stringify(r) === JSON.stringify(row1));
 
-    if (!row2) {
-      return false;
+    if (result1.length !== result2.length) {
+        valuesSame = false;
     }
-  }
 
-  return true;
+
+    for (let i = 0; i < result1.length; i++) {
+        const values1 = Object.values(result1[i]);
+        const matchingRow = result2.find(row => {
+            const values2 = Object.values(row);
+            return JSON.stringify(values1) === JSON.stringify(values2);
+        });
+
+        if (!matchingRow) {
+            valuesSame = false;
+        }
+    }
+
+
+    if (JSON.stringify(Object.keys(result1[0] || {})) !== JSON.stringify(Object.keys(result2[0] || {}))) {
+        columnSame = false;
+    }
+
+    return [columnSame, valuesSame];
 }
 
 function fileWrite(filePath, resultString) {

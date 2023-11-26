@@ -261,10 +261,10 @@ function App() {
           ) : result.query1 && result.query2 ? (
             <>               
             {
-                result.status == 'Jawaban Benar. Isi tabel dan kolom sama.' ? (
-                    <AlertCorrect message = {result.status}/>
+                result.status == 'Correct' ? (
+                    <AlertCorrect message = {result.message}/>
                 ) : (
-                    <AlertWrong message = {result.status}/>
+                    <AlertWrong message = {result.message}/>
                     
                 )
             }
