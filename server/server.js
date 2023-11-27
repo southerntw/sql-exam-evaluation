@@ -84,21 +84,33 @@ app.post('/compare', (req, res, next) => {
             return next(err);
         }
 
-        const query1 = result[0].jawaban
+        let query1 = "";
+
+        try {
+            query1 = result[0].jawaban
+        } catch (error) {
+            return next("Question ID tidak ditemukan.")
+        }
+        
 
         con_classicmodels.connect(function(err) {
-            if (err) {
+            if (err) {    
+                console.log("[D] Error Caught");
+                console.log(err.message);
                 return next(err);
             }
             console.log("Connected!");
 
             con_classicmodels.query(query1, function(err, result1, fields1) {
                 if (err) {
+                    console.log("[D] Error Caught");
+                    console.log(err.message);    
                     return next(err);
                 }
 
                 con_classicmodels.query(query2, function(err, result2, fields2) {
                     if (err) {
+                        
                         return next(err.message);
                     }
 
