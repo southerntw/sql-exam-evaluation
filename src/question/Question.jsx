@@ -15,17 +15,40 @@ function Question() {
     const [query2, setQuery2] = useState('');
     const [result, setResult] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [countdown, setCountdown] = useState(10);
+    const [cooldown, setCooldown] = useState(10);
     const [isLoading, setIsLoading] = useState(false);
+
+    const targetTime = '16:20:00'; // Change this to your desired time
+
+    // Calculate the milliseconds until the target time
+    const targetDateTime = new Date();
+    const [targetHour, targetMinute, targetSecond] = targetTime.split(':').map(Number);
+    targetDateTime.setHours(targetHour, targetMinute, targetSecond, 0);
+    const timeDiff = targetDateTime.getTime() - new Date().getTime();
+
+    // Initialize the countdown with the time difference in seconds
+    const [countdown, setCountdown] = useState(Math.ceil(timeDiff / 1000));
     
     const submitForm = () => {
+        console.log("[D]: ", questionId);
+        console.log("[D]: ", query2);
+
         if (isLoading) {
             return;
         }
         setIsLoading(true);
         setResult({})
 
-        fetch(`compare?questionId=${questionId}&query2=${encodeURIComponent(query2)}`)
+        fetch('/compare', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                questionId: questionId,
+                query2: query2,
+              }),
+            })  
           .then((response) => {
             setIsLoading(false);
             if (!response.ok) {
@@ -49,20 +72,16 @@ function Question() {
           });
   };
 
-
-  useEffect(() => {
-    let timer;
-
-    // Update countdown every second
-    if (isSubmitting) {
-      timer = setInterval(() => {
-        setCountdown((prevCount) => (prevCount > 0 ? prevCount - 1 : 0));
-      }, 1000);
-    }
-
-    // Clear the interval when the component unmounts or the countdown reaches 0
-    return () => clearInterval(timer);
-  }, [isSubmitting]);
+  const renderCountdownText = () => {
+        // Customize the text based on the countdown value
+        if (countdown === 0) {
+            return 'Time is up!';
+        } else if (countdown <= 5) {
+            return `Hurry up! Time left: ${countdown}s`;
+        } else {
+            return `Cooldown: ${countdown}s`;
+        }
+    };
 
   const render = (data, key) => {
       const columns = Object.keys(data[0] || {});
@@ -221,7 +240,6 @@ function Question() {
                         </div>
                     ) : 'Check Query'}
         </Button>
-        {isSubmitting && <span style={styles.countdown}>{`Cooldown: ${countdown}s`}</span>}
         
         </form>
 
@@ -242,10 +260,11 @@ function Question() {
           ) : result.query1 && result.query2 ? (
             <>               
             {
-                result.status == 'Jawaban Benar. Isi tabel sama.' ? (
-                    <AlertCorrect message = {result.status}/>
+                result.status == 'Correct' ? (
+                    <AlertCorrect message = {result.message}/>
                 ) : (
-                    <AlertWrong message = {result.status}/>
+                    <AlertWrong message = {result.message}/>
+                    
                 )
             }
                <div className="table-container">
@@ -254,7 +273,7 @@ function Question() {
                   {render(result.query1.data, 'query1')}
                 </div>
                 <div className="table-container">
-                  <p>Jawaban Anda:</p>
+                  <p>Jawaban Praktikan:</p>
                   <p>{result.query2.rows}r x {result.query2.columns}c</p>
                   {render(result.query2.data, 'query2')}
                 </div>

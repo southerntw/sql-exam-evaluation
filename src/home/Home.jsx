@@ -14,4 +14,4 @@ function Home() {
     
 };
 
-export default QueryC;
+export default Home;
