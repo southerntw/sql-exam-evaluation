@@ -9,36 +9,29 @@ import Button from '@mui/material/Button';
 import AlertWrong from '../components/AlertWrong';
 import AlertCorrect from '../components/AlertCorrect';
 import AlertError from '../components/AlertError';
+import QuestionList from '../components/QuestionList'
 
 function Home() {
 	const [questions, setQuestions] = useState([]);
 
     useEffect(() => {
-    	fetch('/questions')
-    		.then((response) => {
-    			if (!response.ok) {
-              	throw new Error(`${response.status}: ${response.statusText}`);
-            }
-            return response.json();
-    		})
-    		.then((data) => setQuestions(data.questions))
-    		.catch((error) => {
-    			console.log(error.message);
-    		})
+    	const fetchQuestions = async () => {
+	      try {
+	        const response = await fetch('/questions');
+	        const data = await response.json();
+	        setQuestions(data.questions);
+	      } catch (error) {
+	        console.error('Error fetching questions:', error);
+	      }
+	  };
+
+	  fetchQuestions();
     }, []);
 
     return (
-    	<div>
-	      <h1>Question List</h1>
-	      <ul>
-	        {questions.map(question => (
-	          <li key={question.id}>
-	            {question.id}
-	          </li>
-	        ))}
-	      </ul>
-	    </div>
-    )
+    	<h1>Question List</h1>
+    	<QuestionList questions={questions}>
+    );
 };
 
 export default Home;
