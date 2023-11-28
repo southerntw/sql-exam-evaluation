@@ -5,13 +5,16 @@ import React, {
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import './App.css';
 import Question from './question/Question';
+import Home from './home/Home'
 
 
 function App() {
     return (
     <Router>
       <Routes>
-        <Route path="/" element={<Question />} />
+        <Route path="/" element=
+            {<Home />}   
+        />
         <Route path="/question/:question_id" />
       </Routes>
     </Router>

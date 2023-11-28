@@ -211,7 +211,6 @@ function areResultsEqual(result1, result2) {
 }
 
 function fileWrite(filePath, resultString) {
-    // Write to the file
     fs.writeFile(filePath, resultString, (err) => {
         if (err) {
             console.error('Error writing to file:', err);
