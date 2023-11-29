@@ -12,10 +12,8 @@ function App() {
     return (
     <Router>
       <Routes>
-        <Route path="/" element=
-            {<Home />}   
-        />
-        <Route path="/question/:question_id" />
+        <Route path="/" element={<Home />}/>
+        <Route path="/question/:question_id" element={<Question/>} />
       </Routes>
     </Router>
   );

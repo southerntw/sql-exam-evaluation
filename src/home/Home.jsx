@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 import AlertWrong from '../components/AlertWrong';
 import AlertCorrect from '../components/AlertCorrect';
 import AlertError from '../components/AlertError';
-import QuestionList from '../components/QuestionList'
+import QuestionList from '../components/QuestionList';
 
 function Home() {
 	const [questions, setQuestions] = useState([]);
@@ -29,8 +29,12 @@ function Home() {
     }, []);
 
     return (
-    	<h1>Question List</h1>
-    	<QuestionList questions={questions}>
+        <>
+        	<TopBar />
+            <div style={{ paddingTop: '20px' }}>
+        	   <QuestionList questions={questions}/>
+            </div>
+        </>
     );
 };
 

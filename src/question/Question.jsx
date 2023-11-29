@@ -2,6 +2,7 @@ import React, {
     useState,
     useEffect,
 } from 'react';
+import { useParams } from 'react-router-dom';
 import '../App.css';
 import TopBar from '../components/TopBar';
 import ClipLoader from "react-spinners/ClipLoader";
@@ -11,6 +12,8 @@ import AlertCorrect from '../components/AlertCorrect';
 import AlertError from '../components/AlertError';
 
 function Question() {
+    const { question_id } = useParams();
+
     const [questionId, setQuestionId] = useState('');
     const [query2, setQuery2] = useState('');
     const [result, setResult] = useState({});
@@ -28,6 +31,10 @@ function Question() {
 
     // Initialize the countdown with the time difference in seconds
     const [countdown, setCountdown] = useState(Math.ceil(timeDiff / 1000));
+
+    useEffect(() => {
+        setQuestionId(question_id)
+    })
     
     const submitForm = () => {
         console.log("[D]: ", questionId);
@@ -205,8 +212,9 @@ function Question() {
         onChange = {
             (e) => setQuestionId(e.target.value)
         }
-        required /
-        >
+        required
+        readOnly 
+        />
         <
         br / >
         <
