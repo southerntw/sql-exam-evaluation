@@ -192,29 +192,9 @@ function Question() {
         form style = {
             styles.form
         } >
-        <
-        label style = {
-            styles.label
-        }
-        htmlFor = "questionId" >
-        Question ID:
-        <
-        /label> <
-        input style = {
-            styles.input
-        }
-        type = "text"
-        id = "questionId"
-        name = "questionId"
-        value = {
-            questionId
-        }
-        onChange = {
-            (e) => setQuestionId(e.target.value)
-        }
-        required
-        readOnly 
-        />
+        <h2 htmlFor = "questionId" >
+            Question {questionId}
+        </h2>
         <
         br / >
         <
@@ -222,7 +202,7 @@ function Question() {
             styles.label
         }
         htmlFor = "query2" >
-        Query 2:
+        Jawaban Anda:
         <
         /label> <
         textarea style = {
@@ -246,7 +226,7 @@ function Question() {
                         <div className="spinner-border" role="status">
                             <span className="visually-hidden">Loading...</span>
                         </div>
-                    ) : 'Check Query'}
+                    ) : 'Submit'}
         </Button>
         
         </form>
