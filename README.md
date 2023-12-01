@@ -10,9 +10,7 @@ npm i
 npm start
 ```
 
-<details>
-<h3>TODO</h3>
-<br>
+### TODO:
 - [ ] Clean Architecture
 - [X] ~~19/11/2023: Fix results comparison~~
 - [X] ~~19/11/2023: Show exception message on the frontend.~~
@@ -28,4 +26,3 @@ npm start
 - [ ] 01/12/2023: Customize UI (Replace Bulma and probably MUI)
 - [ ] 01/12/2023: Refactor messy codes (Frontend Auth)
 - [ ] 02/12/2023: Fix frontend routes
-</details>
