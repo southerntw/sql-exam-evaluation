@@ -17,10 +17,11 @@ npm start
 - [ ] 23/11/2023: Fix cooldown bugs
 - [X] 25/11/2023: Refactor messy codes (Backend 1)
 - [X] 25/11/2023: Create Question List Page
-- [ ] 25/11/2023: User auth
+- [X] 25/11/2023: User auth (JWT Implementation)
 - [ ] 25/11/2023: Admin auth
 - [ ] 01/12/2023: Structured Logging
 - [ ] 01/12/2023: Improve compare performance on high traffic, if possible
 - [ ] 01/12/2023: Adjust UX for student exams
 - [ ] 01/12/2023: Customize UI (Replace Bulma and probably MUI)
 - [ ] 01/12/2023: Refactor messy codes (Frontend Auth)
+- [ ] 02/12/2023: Fix frontend routes
