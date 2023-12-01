@@ -16,7 +16,8 @@ npm start
 - [X] ~~19/11/2023: Show exception message on the frontend.~~
 - [X] ~~20/11/2023: Organize Folder Structure~~
 - [ ] 23/11/2023: Fix cooldown bugs
-- [ ] 25/11/2023: Refactor messy codes.
-- [ ] 25/11/2023: Create Question List Page
+- [ ] 25/11/2023: Refactor messy codes
+- [X] 25/11/2023: Create Question List Page
 - [ ] 25/11/2023: JWT, probably
 - [ ] 25/11/2023: Create an auto-correction system
+- [ ] 01/12/2023: Structured Logging
