@@ -1,4 +1,4 @@
-This project is built with MySQL, Express, React, and NodeJS. The initial purpose of this project to greatly ease SQL's exam reviews for the lazy. However, it is *definitely* turning into something else at the moment - a coding challenge site.
+This project is built with MySQL, Express, React, and NodeJS. The initial purpose of this project is to greatly ease SQL's exam reviews for the lazy. However, it is *definitely* turning into something else at the moment... like some sort of SQL coding challenge site.
 
 ## Install
 ```
