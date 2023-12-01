@@ -8,6 +8,7 @@ const refreshToken = require('../controllers/RefreshToken');
 const router = require('express').Router();
 
 // Auth routes
+router.get('/users', verifyToken, getUsers);
 router.post('/users', Register);
 router.post('/login', Login);
 router.delete('/logout', Logout);

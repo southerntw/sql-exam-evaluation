@@ -10,31 +10,61 @@ import Button from '@mui/material/Button';
 import AlertWrong from '../components/AlertWrong';
 import AlertCorrect from '../components/AlertCorrect';
 import AlertError from '../components/AlertError';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { InvalidTokenError, jwtDecode } from "jwt-decode";
 
 function Question() {
     const { question_id } = useParams();
+
+    // auth
+    const [name, setName] = useState('');
+    const [token, setToken] = useState('');
+    const [expire, setExpire] = useState('');
+    const [users, setUsers] = useState([]);
+    const navigate = useNavigate();
 
     const [questionId, setQuestionId] = useState('');
     const [query2, setQuery2] = useState('');
     const [result, setResult] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [cooldown, setCooldown] = useState(10);
     const [isLoading, setIsLoading] = useState(false);
 
-    const targetTime = '16:20:00'; // Change this to your desired time
-
-    // Calculate the milliseconds until the target time
-    const targetDateTime = new Date();
-    const [targetHour, targetMinute, targetSecond] = targetTime.split(':').map(Number);
-    targetDateTime.setHours(targetHour, targetMinute, targetSecond, 0);
-    const timeDiff = targetDateTime.getTime() - new Date().getTime();
-
-    // Initialize the countdown with the time difference in seconds
-    const [countdown, setCountdown] = useState(Math.ceil(timeDiff / 1000));
-
     useEffect(() => {
+        refreshToken();
         setQuestionId(question_id)
-    })
+    }, [question_id])
+
+    const refreshToken = async () => {
+        try {
+            const response = await axios.get('/token');
+            setToken(response.data.accessToken);
+            const decoded = jwtDecode(response.data.accessToken);
+            setName(decoded.name);
+            setExpire(decoded.exp);
+        } catch (error) {
+            if (error.response) {
+                navigate("/login");
+            }
+        }
+    }
+
+    const axiosJWT = axios.create();
+
+    axiosJWT.interceptors.request.use(async (config) => {
+        const currentDate = new Date();
+        if (expire * 1000 < currentDate.getTime()) {
+            const response = await axios.get('/token');
+            config.headers.Authorization = `Bearer ${response.data.accessToken}`;
+            setToken(response.data.accessToken);
+            const decoded = jwtDecode(response.data.accessToken);
+            setName(decoded.name);
+            setExpire(decoded.exp);
+        }
+        return config;
+    }, (error) => {
+        return Promise.reject(error);
+    });
     
     const submitForm = () => {
         console.log("[D]: ", questionId);
@@ -46,49 +76,34 @@ function Question() {
         setIsLoading(true);
         setResult({})
 
-        fetch('/compare', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                questionId: questionId,
-                query2: query2,
-              }),
-            })  
+        axios.post('/compare', {
+            questionId: questionId,
+            query2: query2,
+          }, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
           .then((response) => {
             setIsLoading(false);
-            if (!response.ok) {
+            if (!response.status === 200) {
               throw new Error(`${response.status}: ${response.statusText}`);
             }
-            return response.json(); // Assuming the server sends JSON for success
+            return response.data;
           })
           .then((data) => {
             setResult(data);
             setTimeout(() => {
               setIsSubmitting(false);
-              setCountdown(10);
             }, 10000);
           })
           .catch((error) => {
             setResult(`Error: ${error.message}`);
             setTimeout(() => {
               setIsSubmitting(false);
-              setCountdown(5);
             }, 10000);
           });
   };
-
-  const renderCountdownText = () => {
-        // Customize the text based on the countdown value
-        if (countdown === 0) {
-            return 'Time is up!';
-        } else if (countdown <= 5) {
-            return `Hurry up! Time left: ${countdown}s`;
-        } else {
-            return `Cooldown: ${countdown}s`;
-        }
-    };
 
   const render = (data, key) => {
       const columns = Object.keys(data[0] || {});
@@ -248,7 +263,7 @@ function Question() {
           ) : result.query1 && result.query2 ? (
             <>               
             {
-                result.status == 'Correct' ? (
+                result.status === 'Correct' ? (
                     <AlertCorrect message = {result.message}/>
                 ) : (
                     <AlertWrong message = {result.message}/>

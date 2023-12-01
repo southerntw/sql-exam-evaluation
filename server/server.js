@@ -10,6 +10,7 @@ process.on('uncaughtException', (err) => {
 });
 
 require('dotenv').config();
+console.log(require('dotenv').config())
 const app = express();
 
 app.use(cors({ credentials:true, origin :`http://localhost:${port}`}));

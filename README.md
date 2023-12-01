@@ -15,10 +15,12 @@ npm start
 - [X] ~~19/11/2023: Show exception message on the frontend.~~
 - [X] ~~20/11/2023: Organize Folder Structure~~
 - [ ] 23/11/2023: Fix cooldown bugs
-- [ ] 25/11/2023: Refactor messy codes
+- [X] 25/11/2023: Refactor messy codes (Backend 1)
 - [X] 25/11/2023: Create Question List Page
 - [ ] 25/11/2023: User auth
 - [ ] 25/11/2023: Admin auth
 - [ ] 01/12/2023: Structured Logging
 - [ ] 01/12/2023: Improve compare performance on high traffic, if possible
 - [ ] 01/12/2023: Adjust UX for student exams
+- [ ] 01/12/2023: Customize UI (Replace Bulma and probably MUI)
+- [ ] 01/12/2023: Refactor messy codes (Frontend Auth)
