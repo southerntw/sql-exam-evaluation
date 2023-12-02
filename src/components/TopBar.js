@@ -5,7 +5,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 export default function TopBar({ userName }) {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ export default function TopBar({ userName }) {
     const logout = async () => {
         try {
             await axios.delete('/logout');
-            navigate("/");
+            navigate("/login");
         } catch (error) {
             console.log(error);
         }
@@ -23,9 +23,11 @@ export default function TopBar({ userName }) {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar variant="dense">
-          <Typography variant="h6" color="inherit" component="div">
-            SQLExam
-          </Typography>
+          <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Typography variant="h6" color="inherit" component="div">
+              SQLExam
+            </Typography>
+          </Link>
           <Typography
             variant="h6"
             color="inherit"
