@@ -1,6 +1,7 @@
 const express = require('express');
 const routes = require('./routes/index');
 const db = require('./config/Database');
+const { User, Answer, Question, Group } = require('./models');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const port = 3001;

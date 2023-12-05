@@ -1,6 +1,6 @@
 const getQuestions = require('./main/getQuestions');
 const checkAnswer = require('./main/checkAnswer');
-const UserController = require('../controllers/Users');
+const UserController = require('../controllers/UsersController');
 const { getUsers, Register, Login, Logout } = UserController;
 const verifyToken = require('../middleware/VerifyToken');
 const refreshToken = require('../controllers/RefreshToken');
