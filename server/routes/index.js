@@ -1,4 +1,5 @@
-const checkAnswer = require('./main/checkAnswer');
+// const checkAnswer = require('./main/checkAnswer');
+const compareQuery = require('../controllers/AnswersControllers');
 const UserController = require('../controllers/UsersController');
 const QuestionController = require('../controllers/QuestionsControllers');
 const { getUsers, Register, Login, Logout } = UserController;
@@ -17,6 +18,6 @@ router.get('/token', refreshToken);
 
 // Main routes
 router.get('/questions', getQuestions);
-router.post('/compare', checkAnswer);
+router.post('/compare', compareQuery);
 
 module.exports = router;

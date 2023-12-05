@@ -19,6 +19,7 @@ function Question() {
 
     // auth
     const [name, setName] = useState('');
+    const [uid, setUid] = useState('');
     const [token, setToken] = useState('');
     const [expire, setExpire] = useState('');
     const [users, setUsers] = useState([]);
@@ -41,6 +42,7 @@ function Question() {
             setToken(response.data.accessToken);
             const decoded = jwtDecode(response.data.accessToken);
             setName(decoded.name);
+            setUid(decoded.userId);
             setExpire(decoded.exp);
         } catch (error) {
             if (error.response) {
@@ -59,16 +61,21 @@ function Question() {
             setToken(response.data.accessToken);
             const decoded = jwtDecode(response.data.accessToken);
             setName(decoded.name);
+            setUid(decoded.userId);
             setExpire(decoded.exp);
         }
         return config;
     }, (error) => {
         return Promise.reject(error);
     });
+
+    console.log(`[D] ${name}`)
+            console.log(`[D] ${uid}`);
     
     const submitForm = () => {
         console.log("[D]: ", questionId);
         console.log("[D]: ", query2);
+        console.log("[D]: ", uid);
 
         if (isLoading) {
             return;
@@ -77,8 +84,9 @@ function Question() {
         setResult({})
 
         axios.post('/compare', {
+            answer: query2,
+            userId: uid,
             questionId: questionId,
-            query2: query2,
           }, {
             headers: {
               'Content-Type': 'application/json',
