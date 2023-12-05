@@ -18,7 +18,8 @@ const Users = db.define('users',{
         type: DataTypes.STRING
     },
     role: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        defaultValue: "student"
     },
     score: {
         type: DataTypes.INTEGER

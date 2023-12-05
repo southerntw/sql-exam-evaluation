@@ -26,7 +26,8 @@ function Home() {
     	const fetchQuestions = async () => {
 	      try {
 	        const response = await axios.get('/questions');
-	        setQuestions(response.data.questions);
+            console.log(response);
+	        setQuestions(response.data);
 	      } catch (error) {
 	        console.error('Error fetching questions:', error);
 	      }
