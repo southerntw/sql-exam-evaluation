@@ -12,6 +12,7 @@ npm start
 
 ### TODO:
 - [ ] Clean Architecture
+- [ ] Query comparison (critical bug)
 - [X] ~~19/11/2023: Fix results comparison~~
 - [X] ~~19/11/2023: Show exception message on the frontend.~~
 - [X] ~~20/11/2023: Organize Folder Structure~~
