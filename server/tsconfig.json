@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "types": ["node", "dotenv"],
+    "esModuleInterop": true,
+    "outDir": "./built",
+    "allowJs": true,
+    "target": "es5"
+  },
+  "include": ["./src/**/*", "./*"]
+}
