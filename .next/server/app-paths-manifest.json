@@ -1,0 +1,4 @@
+{
+  "/(main)/questions/page": "app/(main)/questions/page.js",
+  "/(main)/questions/[questionId]/page": "app/(main)/questions/[questionId]/page.js"
+}

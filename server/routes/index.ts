@@ -3,11 +3,11 @@ import {
   Register,
   Login,
   Logout,
-} from "../controllers/UsersControllers";
-import QuestionController from "../controllers/QuestionsControllers";
+} from "../repository/UsersControllers";
+import QuestionController from "../repository/QuestionsControllers";
 import { verifyToken } from "../middleware/VerifyToken";
-import { refreshToken } from "../controllers/RefreshToken";
-import { compareQuery } from "../controllers/AnswersControllers";
+import { refreshToken } from "../repository/RefreshToken";
+import { compareQuery } from "../repository/AnswersControllers";
 
 const router = require("express").Router();
 const { getQuestions, getQuestion } = QuestionController; // TODO: Implement getQuestion, possibly
