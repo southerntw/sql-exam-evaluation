@@ -1,22 +1,37 @@
 import { QuestionItem } from "../_components/question-item";
 
-export default function Main() {
+interface Question {
+  questionId: number;
+  text: string;
+  correctAnswer: string;
+  jsonAnswer: string;
+}
+
+async function getQuestions(): Promise<Question[]> {
+  const res = await fetch("http://localhost:3001/questions");
+
+  if (!res.ok) {
+    throw new Error("Something went wrong");
+  }
+
+  return res.json();
+}
+
+export default async function Main() {
+  const data = await getQuestions();
   const singular = {
     id: "A7",
     title: "Cepot dan Dewala",
   };
 
-  const questions = new Array(10).fill(singular);
-
   return (
-    <div className="w-full h-full">
-      <div className="flex flex-row flex-wrap px-10 gap-y-2 justify-center">
-        {questions.map((question, index) => {
-          return (
-            <QuestionItem key={index} title={question.title} id={question.id} />
-          );
-        })}
-      </div>
+    <div>
+      <h1>Questions</h1>
+      <ul>
+        {data.map((item) => (
+          <QuestionItem key={item.questionId} item={item} />
+        ))}
+      </ul>
     </div>
   );
 }
