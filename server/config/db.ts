@@ -8,10 +8,10 @@ import { UserTable } from "../models/User";
 import "dotenv/config";
 
 interface Database {
-  answers: AnswersTable;
-  groups: GroupTable;
-  questions: QuestionTable;
-  users: UserTable;
+  answer: AnswersTable;
+  group: GroupTable;
+  question: QuestionTable;
+  user: UserTable;
 }
 
 const dialect = new MysqlDialect({
